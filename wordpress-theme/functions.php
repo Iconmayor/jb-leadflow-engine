@@ -38,11 +38,19 @@ function jd_plumbing_scripts() {
 		null
 	);
 
-	// Theme stylesheet
+	// Theme stylesheet (required by WP)
 	wp_enqueue_style(
 		'jd-plumbing-style',
 		get_stylesheet_uri(),
 		array( 'jd-google-fonts' ),
+		wp_get_theme()->get( 'Version' )
+	);
+
+	// Custom styles
+	wp_enqueue_style(
+		'jd-plumbing-main',
+		get_template_directory_uri() . '/assets/css/main.css',
+		array( 'jd-plumbing-style' ),
 		wp_get_theme()->get( 'Version' )
 	);
 
