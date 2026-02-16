@@ -49,8 +49,7 @@ const Header = () => {
         <div className="hidden md:flex items-center gap-3">
           <a href="tel:01onal23456789" className="flex items-center gap-2 text-sm font-semibold text-foreground">
             <Phone className="w-4 h-4 text-accent" />
-            0123 456 789
-          </a>
++447588886112          </a>
           <Link to="/contact">
             <Button className="bg-cta-gradient text-accent-foreground shadow-cta hover:opacity-90 transition-opacity font-semibold">
               Get a Quote

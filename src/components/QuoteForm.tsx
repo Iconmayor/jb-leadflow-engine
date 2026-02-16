@@ -2,10 +2,17 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { CheckCircle } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { CheckCircle, Loader2 } from "lucide-react"; // Loader icon
 import { toast } from "sonner";
 import { z } from "zod";
+import emailjs from "emailjs-com";
 
 const formSchema = z.object({
   name: z.string().trim().min(1, "Name is required").max(100),
@@ -19,16 +26,20 @@ type FormData = z.infer<typeof formSchema>;
 
 const QuoteForm = ({ variant = "default" }: { variant?: "default" | "compact" }) => {
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false); // <-- loading state
   const [errors, setErrors] = useState<Partial<Record<keyof FormData, string>>>({});
   const [form, setForm] = useState<FormData>({
-    name: "", phone: "", email: "", service: "", message: "",
+    name: "",
+    phone: "",
+    email: "",
+    service: "",
+    message: "",
   });
-  // Honeypot
   const [honeypot, setHoneypot] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (honeypot) return; // bot detected
+    if (honeypot) return;
 
     const result = formSchema.safeParse(form);
     if (!result.success) {
@@ -41,23 +52,53 @@ const QuoteForm = ({ variant = "default" }: { variant?: "default" | "compact" })
       return;
     }
     setErrors({});
-    setSubmitted(true);
-    toast.success("Thank you! We'll be in touch shortly.");
+    setLoading(true); // start loading
+
+    emailjs
+      .send(
+        "YOUR_SERVICE_ID",
+        "YOUR_TEMPLATE_ID",
+        {
+          name: form.name,
+          phone: form.phone,
+          email: form.email,
+          service: form.service,
+          message: form.message,
+          to_email: "iconmayor1@gmail.com",
+        },
+        "YOUR_PUBLIC_KEY"
+      )
+      .then(
+        () => {
+          setLoading(false); // stop loading
+          setSubmitted(true); // show success message
+          toast.success("Thank you! We'll be in touch shortly.");
+        },
+        (err) => {
+          setLoading(false); // stop loading on error
+          toast.error("Oops! Something went wrong. Please try again.");
+          console.error(err);
+        }
+      );
   };
 
   if (submitted) {
     return (
       <div className="flex flex-col items-center justify-center py-8 text-center">
         <CheckCircle className="w-12 h-12 text-accent mb-3" />
-        <h3 className="font-display text-xl font-bold text-foreground mb-1">Quote Request Received!</h3>
-        <p className="text-muted-foreground text-sm">We'll get back to you as soon as possible.</p>
+        <h3 className="font-display text-xl font-bold text-foreground mb-1">
+          Quote Request Received!
+        </h3>
+        <p className="text-muted-foreground text-sm">
+          We'll get back to you as soon as possible.
+        </p>
       </div>
     );
   }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4" noValidate>
-      {/* Honeypot - hidden */}
+      {/* Honeypot */}
       <input
         type="text"
         name="website"
@@ -123,8 +164,13 @@ const QuoteForm = ({ variant = "default" }: { variant?: "default" | "compact" })
         className="bg-card min-h-[80px]"
       />
 
-      <Button type="submit" className="w-full bg-cta-gradient text-accent-foreground shadow-cta hover:opacity-90 font-semibold text-base py-6">
-        Request a Free Quote
+      <Button
+        type="submit"
+        className="w-full bg-cta-gradient text-accent-foreground shadow-cta hover:opacity-90 font-semibold text-base py-6 flex items-center justify-center"
+        disabled={loading} // disable button while sending
+      >
+        {loading ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : null}
+        {loading ? "Sending..." : "Request a Free Quote"}
       </Button>
     </form>
   );

@@ -57,10 +57,14 @@ const Index = () => {
                   Request a Quote
                 </Button>
               </Link>
-              <a href="tel:01234567890">
-                <Button variant="outline" className="border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10 font-semibold text-base px-8 py-6">
-                  <Phone className="w-5 h-5 mr-2" /> Call Now
-                </Button>
+              <a href="tel:+447588886112">
+                <Button
+  variant="outline"
+  className="border-primary-foreground/30 text-black hover:bg-primary-foreground/10 font-semibold text-base px-8 py-6"
+>
+  <Phone className="w-5 h-5 mr-2" /> Call Now
+</Button>
+
               </a>
             </div>
           </motion.div>
@@ -161,7 +165,7 @@ const Index = () => {
         </p>
         <a href="tel:01234567890">
           <Button className="bg-cta-gradient text-accent-foreground shadow-cta hover:opacity-90 font-semibold px-8 py-5">
-            <Phone className="w-5 h-5 mr-2" /> 0123 456 789
+            <Phone className="w-5 h-5 mr-2" /> +447588886112
           </Button>
         </a>
       </section>
